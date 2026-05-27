@@ -1,0 +1,438 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body.login-body,
+body.register-body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #0a192f;
+    color: #ffffff;
+}
+
+body.panel-body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 100%);
+    color: #111827;
+}
+
+/* Contenedor central */
+.login-container,
+.form-container {
+    width: min(100%, 520px);
+    text-align: center;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+}
+
+body.register-body .form-container {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+body.login-body .login-box {
+    display: grid;
+    gap: 16px;
+}
+
+body.panel-body .panel-header {
+    padding: 36px 24px;
+    background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+    color: #f8fafc;
+}
+
+body.panel-body .panel-header-content {
+    width: min(100%, 1100px);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+body.panel-body .panel-wrap {
+    width: min(100%, 1100px);
+    margin: -40px auto 40px;
+    padding: 0 24px 24px;
+}
+
+body.panel-body .page-container {
+    background: #ffffff;
+    border-radius: 32px;
+    padding: 32px;
+    box-shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
+}
+
+body.panel-body .page-header {
+    text-align: left;
+    margin-bottom: 24px;
+}
+
+body.panel-body .page-header h1 {
+    color: #111827;
+}
+
+body.panel-body .page-header p,
+.form-description {
+    margin: 8px 0 0;
+    color: #475569;
+}
+
+body.panel-body .card {
+    background: #f8fafc;
+    border-radius: 24px;
+    border: 1px solid #e2e8f0;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+body.panel-body .request-item {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    border-radius: 18px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+}
+
+body.panel-body .request-item button {
+    width: auto;
+    padding: 10px 16px;
+    background: #0f172a;
+    color: #ffffff;
+    border-radius: 12px;
+}
+
+body.panel-body button,
+body.panel-body .btn-registro,
+body.panel-body .btn-admin {
+    width: auto;
+}
+
+/* Iniciales PMT grandes y sin bordes */
+.institucional-header h1 {
+    font-size: 5rem;
+    margin: 0;
+    color: #1ef50a;
+    letter-spacing: 5px;
+}
+
+/* Estilo de los botones (Verde institucional) */
+.btn-group a {
+    display: block;
+    background-color: #28a745; /* Verde profesional */
+    color: white;
+    padding: 15px 30px;
+    margin: 15px 0;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-group a:hover {
+    background-color: #218838;
+}
+
+/* Footer sutil */
+footer {
+    margin-top: 20px;
+    font-size: 0.8rem;
+    opacity: 0.6;
+}
+
+.input-field,
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="tel"],
+select,
+textarea {
+    width: 100%;
+    padding: 14px 16px;
+    margin: 10px 0;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #f8fafc;
+}
+
+body.panel-body .input-field,
+body.panel-body input[type="text"],
+body.panel-body input[type="password"],
+body.panel-body input[type="email"],
+body.panel-body input[type="tel"],
+body.panel-body select,
+body.panel-body textarea {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #0f172a;
+}
+
+input::placeholder,
+select,
+textarea {
+    color: #cbd5e1;
+}
+
+button,
+.btn-registro,
+.btn-admin {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    background: #1ef50a;
+    color: #061b12;
+    font-weight: 700;
+    padding: 14px 0;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+    text-decoration: none;
+}
+
+button:hover,
+.btn-registro:hover,
+.btn-admin:hover {
+    background: #17c40f;
+    transform: translateY(-1px);
+}
+
+.link-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.link-row a {
+    width: 100%;
+}
+
+@media (max-width: 900px) {
+    body.panel-body .panel-wrap {
+        padding: 0 16px 16px;
+    }
+
+    body.panel-body .request-item {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    body.login-body,
+    body.register-body {
+        min-height: auto;
+        padding: 24px 12px 36px;
+    }
+
+    .login-container,
+    .form-container,
+    body.panel-body .page-container {
+        width: 100%;
+        padding: 24px 18px;
+        border-radius: 20px;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+    }
+
+    .login-box {
+        gap: 14px;
+    }
+
+    .btn-registro,
+    .btn-admin,
+    button {
+        width: 100%;
+    }
+
+    .panel-header {
+        padding: 28px 18px;
+    }
+
+    .panel-header-content {
+        gap: 8px;
+    }
+
+    .page-header {
+        text-align: center;
+    }
+
+    .page-header h1 {
+        font-size: 2rem;
+    }
+
+    .request-item {
+        grid-template-columns: 1fr;
+    }
+
+    .input-field,
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+        font-size: 0.95rem;
+    }
+}
+
+/* Iniciales PMT grandes y sin bordes */
+.institucional-header h1 {
+    font-size: 5rem;
+    margin: 0;
+    color: #1ef50a;
+    letter-spacing: 5px;
+}
+
+/* Estilo de los botones (Verde institucional) */
+.btn-group a {
+    display: block;
+    background-color: #28a745; /* Verde profesional */
+    color: white;
+    padding: 15px 30px;
+    margin: 15px 0;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-group a:hover {
+    background-color: #218838; /* Verde más oscuro al pasar el mouse */
+}
+
+/* Footer sutil */
+footer {
+    margin-top: 20px;
+    font-size: 0.8rem;
+    opacity: 0.6;
+}
+
+/* Formularios y panel */
+.form-container,
+.page-container {
+    width: min(100%, 520px);
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 2.4rem;
+    color: #1ef50a;
+}
+
+.page-header p,
+.form-description {
+    margin: 8px 0 0;
+    color: #cbd5e1;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    padding: 24px;
+    margin-bottom: 18px;
+}
+
+.card h2 {
+    margin-top: 0;
+}
+
+.input-field,
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="tel"],
+select,
+textarea {
+    width: 100%;
+    padding: 14px 16px;
+    margin: 10px 0;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #f8fafc;
+}
+
+input::placeholder,
+select,
+textarea {
+    color: #cbd5e1;
+}
+
+button,
+.btn-registro,
+.btn-admin {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    background: #1ef50a;
+    color: #061b12;
+    font-weight: 700;
+    padding: 14px 0;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+    text-decoration: none;
+}
+
+button:hover,
+.btn-registro:hover,
+.btn-admin:hover {
+    background: #17c40f;
+    transform: translateY(-1px);
+}
+
+.request-item {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 14px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.request-item button {
+    width: auto;
+    padding: 10px 14px;
+}
+
+.link-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.link-row a {
+    width: 100%;
+}
+
+@media (max-width: 600px) {
+    .request-item {
+        grid-template-columns: 1fr;
+    }
+}

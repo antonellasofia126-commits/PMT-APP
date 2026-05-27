@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrador</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="panel-body">
+    <div class="panel-header">
+        <div class="panel-header-content">
+            <h1>Panel de Administrador - Comando Policial</h1>
+            <p>Gestión de solicitudes y control de personal RRHH del comando.</p>
+        </div>
+    </div>
+    <div class="panel-wrap">
+        <div class="page-container">
+            <header class="page-header">
+            <h1>Panel Administrador</h1>
+            <p>Lista de solicitudes recibidas</p>
+        </header>
+
+        <section class="card">
+            <div id="lista"></div>
+        </section>
+    </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="app.js"></script>
+    <script>
+        db.ref('solicitudes').on('value', snap => {
+            let html = "";
+            snap.forEach(c => {
+                const d = c.val();
+                html += `<div class="request-item"><strong>${d.tipo}</strong><span>${d.fecha}</span><span>${d.idUsuario}</span><button onclick="generarPDF('${d.idUsuario}', '${d.tipo}', '${d.fecha}')">Imprimir</button></div>`;
+            });
+            document.getElementById('lista').innerHTML = html || '<p>No hay solicitudes registradas.</p>';
+        });
+    </script>
+</body>
+</html>

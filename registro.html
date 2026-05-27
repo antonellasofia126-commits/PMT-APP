@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro RRHH - PMT</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="register-body">
+    <div class="form-container">
+        <header class="page-header">
+            <h1>Registro RRHH Comando Policial</h1>
+            <p>Registra tus datos como funcionario del comando para acceder al sistema.</p>
+        </header>
+
+        <div class="form-description">Completa los datos obligatorios y crea tu cuenta para ingresar.</div>
+
+        <input type="text" id="cedula" placeholder="Cédula" class="input-field">
+        <input type="text" id="nombre" placeholder="Nombre completo" class="input-field">
+        <input type="email" id="email" placeholder="Correo electrónico" class="input-field">
+        <input type="tel" id="telefono" placeholder="Teléfono" class="input-field">
+        <input type="text" id="cargo" placeholder="Cargo policial" class="input-field">
+        <input type="text" id="unidad" placeholder="Unidad o dependencia policial" class="input-field">
+        <input type="password" id="pass" placeholder="Contraseña" class="input-field">
+        <input type="password" id="pass2" placeholder="Confirmar contraseña" class="input-field">
+
+        <button onclick="registrar()">Crear cuenta</button>
+        <div class="link-row">
+            <a href="index.html" class="btn-registro">Volver al inicio</a>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <script src="app.js"></script>
+</body>
+</html> 

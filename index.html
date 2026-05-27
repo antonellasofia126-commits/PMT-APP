@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema RRHH - PMT</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-body">
+
+    <div class="login-container">
+        <header class="institucional-header">
+            <h1>PMT</h1>
+        </header>
+
+        <div class="login-box">
+            <h2>Bienvenido al Sistema RRHH del Comando</h2>
+            <input type="text" id="usuario" placeholder="Usuario (Cédula)">
+            <input type="password" id="clave" placeholder="Contraseña">
+            
+            <button onclick="entrar()">Entrar</button>
+            
+            <a href="registro.html" class="btn-registro">¿No tienes cuenta? Regístrate aquí</a>
+            
+            <hr>
+            <a href="panel.administrador.html" class="btn-admin">Ingreso Administrador</a>
+        </div>
+
+        <footer>
+            <p>Sistema de Gestión Policial © 2026</p>
+        </footer>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

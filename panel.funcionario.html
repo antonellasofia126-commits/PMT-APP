@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Funcionario</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="panel-body">
+    <div class="panel-header">
+        <div class="panel-header-content">
+            <h1>Panel del Funcionario - Comando Policial</h1>
+            <p>Solicita reposos y revisa tu información personal del comando policial.</p>
+        </div>
+    </div>
+    <div class="panel-wrap">
+        <div class="page-container">
+            <header class="page-header">
+            <h1>Panel Funcionario</h1>
+            <p>Solicita reposos y revisa tu perfil.</p>
+        </header>
+
+        <section class="card">
+            <div id="perfil"></div>
+        </section>
+
+        <section class="card">
+            <h2>Solicitud de reposo</h2>
+            <p class="form-description">Adjunta el documento si corresponde y envía la solicitud.</p>
+            <input type="date" id="fecha" class="input-field">
+            <input type="file" id="archivo" class="input-field">
+            <button onclick="enviarSolicitud('reposo')">Enviar solicitud</button>
+        </section>
+
+        <section class="card">
+            <h2>Mis solicitudes</h2>
+            <div id="misSolicitudes">Cargando...</div>
+        </section>
+    </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <script src="app.js"></script>
+    <script>
+        const idUsuario = new URLSearchParams(window.location.search).get('id');
+        const perfilDiv = document.getElementById('perfil');
+        const misSolicitudesDiv = document.getElementById('misSolicitudes');
+
+        function cargarPerfil(usuarioId) {
+            db.ref('usuarios/' + usuarioId).once('value').then(snapshot => {
+                const data = snapshot.val();
+                if (!data) {
+                    perfilDiv.innerHTML = '<p>Usuario no encontrado.</p>';
+                    return;
+                }
+                perfilDiv.innerHTML = `
+                    <p><strong>Usuario:</strong> ${data.nombre}</p>
+                    <p><strong>Cédula:</strong> ${usuarioId}</p>
+                    <p><strong>Cargo:</strong> ${data.cargo || 'No especificado'}</p>
+                    <p><strong>Unidad:</strong> ${data.unidad || 'No especificada'}</p>
+                    <p><strong>Correo:</strong> ${data.email || 'No especificado'}</p>
+                `;
+            });
+        }
+
+        function cargarSolicitudes(usuarioId) {
+            db.ref('solicitudes').orderByChild('idUsuario').equalTo(usuarioId).on('value', snap => {
+                let html = '';
+                snap.forEach(c => {
+                    const d = c.val();
+                    html += `<div class="request-item"><strong>${d.tipo}</strong><span>${d.fecha}</span></div>`;
+                });
+                misSolicitudesDiv.innerHTML = html || '<p>No tienes solicitudes registradas.</p>';
+            });
+        }
+
+        if (!idUsuario) {
+            perfilDiv.innerHTML = '<p>No se encontró usuario. Vuelve al inicio.</p>';
+            misSolicitudesDiv.innerHTML = '<p>Inicia sesión correctamente.</p>';
+        } else {
+            cargarPerfil(idUsuario);
+            cargarSolicitudes(idUsuario);
+        }
+    </script>
+</body>
+</html>
