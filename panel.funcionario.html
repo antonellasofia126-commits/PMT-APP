@@ -24,12 +24,21 @@
             <div id="perfil"></div>
         </section>
 
+        <div id="toastNotification" class="toast-notification" style="display:none;"></div>
+
         <section class="card">
-            <h2>Solicitud de reposo</h2>
-            <p class="form-description">Adjunta el documento si corresponde y envía la solicitud.</p>
-            <input type="date" id="fecha" class="input-field">
-            <input type="file" id="archivo" class="input-field">
-            <button onclick="enviarSolicitud('reposo')">Enviar solicitud</button>
+            <h2>Solicitudes</h2>
+            <p class="form-description">Selecciona el tipo de trámite y completa las fechas. Adjunta documento solo si es reposo médico. También puedes solicitar el récord disciplinario.</p>
+            <input type="date" id="fecha" class="input-field" placeholder="Fecha de solicitud">
+            <input type="date" id="fechaInicio" class="input-field" placeholder="Fecha inicio vacaciones">
+            <input type="date" id="fechaFin" class="input-field" placeholder="Fecha fin vacaciones">
+            <input type="file" id="archivo" accept="image/*,application/pdf" class="input-field">
+            <div class="link-row">
+                <button onclick="enviarSolicitud('reposo')">Solicitar reposo</button>
+                <button onclick="enviarSolicitud('vacaciones')">Solicitar vacaciones</button>
+                <button onclick="enviarSolicitud('constancia')">Solicitar constancia de trabajo</button>
+                <button onclick="enviarSolicitud('disciplinario')">Solicitar récord disciplinario</button>
+            </div>
         </section>
 
         <section class="card">
@@ -47,6 +56,40 @@
         const idUsuario = new URLSearchParams(window.location.search).get('id');
         const perfilDiv = document.getElementById('perfil');
         const misSolicitudesDiv = document.getElementById('misSolicitudes');
+        const toastDiv = document.getElementById('toastNotification');
+        let solicitudesPrev = {};
+        let nombreSolicitante = 'Funcionario';
+
+        function showToast(message) {
+            toastDiv.textContent = message;
+            toastDiv.style.display = 'block';
+            toastDiv.classList.add('show-toast');
+            setTimeout(() => {
+                toastDiv.classList.remove('show-toast');
+                toastDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function notifyUser(message) {
+            showToast(message);
+            if (window.Notification && Notification.permission === 'granted') {
+                new Notification('RRHH Comando Policial', { body: message });
+            }
+        }
+
+        function requestNotificationPermission() {
+            if (window.Notification && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        function formatTipoSolicitud(tipo) {
+            if (tipo === 'reposo') return 'reposo médico';
+            if (tipo === 'vacaciones') return 'vacaciones';
+            if (tipo === 'constancia') return 'constancia de trabajo';
+            if (tipo === 'disciplinario') return 'récord disciplinario';
+            return tipo;
+        }
 
         function cargarPerfil(usuarioId) {
             db.ref('usuarios/' + usuarioId).once('value').then(snapshot => {
@@ -55,6 +98,7 @@
                     perfilDiv.innerHTML = '<p>Usuario no encontrado.</p>';
                     return;
                 }
+                nombreSolicitante = data.nombre || nombreSolicitante;
                 perfilDiv.innerHTML = `
                     <p><strong>Usuario:</strong> ${data.nombre}</p>
                     <p><strong>Cédula:</strong> ${usuarioId}</p>
@@ -70,7 +114,24 @@
                 let html = '';
                 snap.forEach(c => {
                     const d = c.val();
-                    html += `<div class="request-item"><strong>${d.tipo}</strong><span>${d.fecha}</span></div>`;
+                    const requestId = c.key;
+                    const estado = d.estado || 'pendiente';
+                    const badgeClass = estado === 'denegada' ? 'status-denied' : estado === 'completada' ? 'status-complete' : 'status-pending';
+                    const range = d.tipo === 'vacaciones' && d.fechaInicio && d.fechaFin ? ` (${d.fechaInicio} a ${d.fechaFin})` : '';
+                    html += `
+                        <div class="request-item">
+                            <strong>${d.tipo}</strong>
+                            <span>${d.fecha}${range}</span>
+                            <span class="status-label ${badgeClass}">${estado.toUpperCase()}</span>
+                        </div>
+                    `;
+
+                    if (solicitudesPrev[requestId] && solicitudesPrev[requestId].estado !== estado) {
+                        const tipoLabel = formatTipoSolicitud(d.tipo);
+                        const estadoLabel = estado.toUpperCase();
+                        notifyUser(`La solicitud de ${tipoLabel} del funcionario ${nombreSolicitante} ahora está ${estadoLabel}.`);
+                    }
+                    solicitudesPrev[requestId] = d;
                 });
                 misSolicitudesDiv.innerHTML = html || '<p>No tienes solicitudes registradas.</p>';
             });
@@ -80,6 +141,7 @@
             perfilDiv.innerHTML = '<p>No se encontró usuario. Vuelve al inicio.</p>';
             misSolicitudesDiv.innerHTML = '<p>Inicia sesión correctamente.</p>';
         } else {
+            requestNotificationPermission();
             cargarPerfil(idUsuario);
             cargarSolicitudes(idUsuario);
         }
