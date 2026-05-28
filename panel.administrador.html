@@ -21,8 +21,22 @@
         </header>
 
         <section class="card">
-            <div id="lista"></div>
+            <h2>Usuarios registrados</h2>
+            <p class="form-description">Lista de usuarios con su información completa. Desde aquí puedes enviar los talones de pago.</p>
+            <div id="listaUsuarios">Cargando...</div>
         </section>
+
+        <section class="card">
+            <h2>Talones de pago</h2>
+            <div id="talonesEnviados">Cargando...</div>
+        </section>
+
+        <section class="card">
+            <h2>Categorías de solicitudes</h2>
+            <div id="grupos"></div>
+        </section>
+
+        <section class="card" id="detalleSolicitud" style="display:none;"></section>
     </div>
     </div>
 
@@ -32,14 +46,165 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="app.js"></script>
     <script>
-        db.ref('solicitudes').on('value', snap => {
-            let html = "";
-            snap.forEach(c => {
-                const d = c.val();
-                html += `<div class="request-item"><strong>${d.tipo}</strong><span>${d.fecha}</span><span>${d.idUsuario}</span><button onclick="generarPDF('${d.idUsuario}', '${d.tipo}', '${d.fecha}')">Imprimir</button></div>`;
+        const adminId = new URLSearchParams(window.location.search).get('id');
+        let adminRequests = {};
+        window.usuariosMap = {};
+
+        function renderUsuarios() {
+            const lista = document.getElementById('listaUsuarios');
+            if (!lista) return;
+            const usuarios = Object.entries(window.usuariosMap || {});
+            if (usuarios.length === 0) {
+                lista.innerHTML = '<p>No hay usuarios registrados.</p>';
+                return;
+            }
+            let html = '';
+            usuarios.forEach(([id, user]) => {
+                html += `
+                    <div class="request-item">
+                        <div>
+                            <strong>${user.nombre || id}</strong> <span>(${id})</span><br>
+                            <small>${user.cargo || 'Cargo no definido'} · ${user.unidad || 'Unidad no definida'}</small><br>
+                            <small>${user.email || 'Sin correo'}${user.telefono ? ' · ' + user.telefono : ''}</small>
+                        </div>
+                        <button onclick="enviarTalonPago('${id}')">Enviar talón de pago</button>
+                    </div>
+                `;
             });
-            document.getElementById('lista').innerHTML = html || '<p>No hay solicitudes registradas.</p>';
-        });
+            lista.innerHTML = html;
+        }
+
+        function cargarTalones() {
+            const talonesDiv = document.getElementById('talonesEnviados');
+            if (!talonesDiv) return;
+            db.ref('talones').orderByChild('fecha').on('value', snap => {
+                let html = '';
+                snap.forEach(child => {
+                    const d = child.val();
+                    const usuario = window.usuariosMap[d.idUsuario] || {};
+                    const nombre = usuario.nombre || d.idUsuario;
+                    const estado = d.estado || 'enviado';
+                    html += `
+                        <div class="request-item">
+                            <span><strong>${nombre}</strong> (${d.fecha})</span>
+                            <span class="status-label">${estado.toUpperCase()}</span>
+                        </div>
+                    `;
+                });
+                talonesDiv.innerHTML = html || '<p>No se han enviado talones de pago.</p>';
+            });
+        }
+
+        window.enviarTalonPago = (usuarioId) => {
+            const usuario = window.usuariosMap[usuarioId] || {};
+            const nombre = usuario.nombre || usuarioId;
+            if (!confirm(`Enviar talón de pago a ${nombre}?`)) return;
+            const fecha = new Date().toISOString().slice(0, 10);
+            db.ref('talones').push({
+                idUsuario: usuarioId,
+                nombre,
+                fecha,
+                estado: 'enviado',
+                adminId: adminId || '',
+                creado: new Date().toISOString()
+            }).then(() => {
+                alert('Talón de pago enviado.');
+                renderUsuarios();
+                cargarTalones();
+                generarPDF(nombre, 'talon', fecha, '', '', false);
+            }).catch(error => {
+                alert('Error al enviar talón de pago: ' + error.message);
+            });
+        };
+
+        function seleccionarSolicitud(requestId) {
+            const solicitud = adminRequests[requestId];
+            if (!solicitud) return;
+            const usuario = window.usuariosMap[solicitud.idUsuario] || {};
+            const nombreUsuario = usuario.nombre || solicitud.idUsuario;
+            const detalle = document.getElementById('detalleSolicitud');
+            detalle.style.display = 'block';
+            detalle.innerHTML = `
+                <h2>Solicitud de ${solicitud.tipo}</h2>
+                <p><strong>Funcionario:</strong> <button class="link-button" disabled>${nombreUsuario}</button></p>
+                <p><strong>Tipo:</strong> ${solicitud.tipo}</p>
+                <p><strong>Fecha solicitud:</strong> ${solicitud.fecha}</p>
+                ${solicitud.tipo === 'vacaciones' ? `<p><strong>Vacaciones:</strong> ${solicitud.fechaInicio} a ${solicitud.fechaFin}</p>` : ''}
+                ${solicitud.tipo === 'reposo' ? `<p><strong>Documento:</strong> ${solicitud.urlImagen ? 'Adjuntado' : 'Sin archivo'}</p>` : ''}
+                <p><strong>Estado:</strong> ${solicitud.estado || 'pendiente'}</p>
+                <div class="link-row">
+                    <button onclick="generarPDF('${nombreUsuario}', '${solicitud.tipo}', '${solicitud.fecha}', '${solicitud.fechaInicio || ''}', '${solicitud.fechaFin || ''}', true)">Imprimir</button>
+                    <button onclick="denegarSolicitud('${requestId}')">Denegar</button>
+                </div>
+            `;
+
+            generarPDF(nombreUsuario, solicitud.tipo, solicitud.fecha, solicitud.fechaInicio || '', solicitud.fechaFin || '', false);
+        }
+
+        function denegarSolicitud(requestId) {
+            db.ref('solicitudes/' + requestId).update({ estado: 'denegada' }).then(() => {
+                alert('Solicitud denegada.');
+            });
+        }
+
+        function cargarSolicitudes() {
+            db.ref('usuarios').once('value').then(usersSnap => {
+                window.usuariosMap = usersSnap.val() || {};
+                renderUsuarios();
+                cargarTalones();
+                db.ref('solicitudes').on('value', snap => {
+                    const grupos = { reposo: [], vacaciones: [], constancia: [], disciplinario: [] };
+                    adminRequests = {};
+
+                    snap.forEach(c => {
+                        const id = c.key;
+                        const d = c.val();
+                        adminRequests[id] = d;
+                        if (grupos[d.tipo]) {
+                            grupos[d.tipo].push({ id, ...d });
+                        }
+                    });
+
+                    let html = '';
+                    Object.entries(grupos).forEach(([tipo, items]) => {
+                        html += `<div class="category-group"><h3>${tipo === 'reposo' ? 'Reposos Médicos' : tipo === 'vacaciones' ? 'Vacaciones' : tipo === 'constancia' ? 'Constancias de Trabajo' : 'Récord Disciplinario'}</h3>`;
+                        if (items.length === 0) {
+                            html += '<p>No hay solicitudes en esta categoría.</p>';
+                        } else {
+                            items.forEach(d => {
+                                const usuario = window.usuariosMap[d.idUsuario] || {};
+                                const nombre = usuario.nombre || d.idUsuario;
+                                const range = d.tipo === 'vacaciones' && d.fechaInicio && d.fechaFin ? ` (${d.fechaInicio} a ${d.fechaFin})` : '';
+                                const estado = d.estado || 'pendiente';
+                                html += `
+                                    <div class="request-item">
+                                        <button class="link-button" onclick="seleccionarSolicitud('${d.id}')">${nombre}</button>
+                                        <span>${d.fecha}${range}</span>
+                                        <span class="status-label">${estado}</span>
+                                    </div>
+                                `;
+                            });
+                        }
+                        html += '</div>';
+                    });
+
+                    document.getElementById('grupos').innerHTML = html;
+                });
+            });
+        }
+
+        if (!adminId) {
+            window.location.href = 'admin.html';
+        } else {
+            db.ref('usuarios/' + adminId).once('value').then(snapshot => {
+                const admin = snapshot.val();
+                if (!admin || admin.rol !== 'admin') {
+                    window.location.href = 'admin.html';
+                } else {
+                    cargarSolicitudes();
+                }
+            });
+        }
     </script>
 </body>
 </html>
