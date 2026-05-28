@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingreso Administrador - Comando Policial</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <header class="institucional-header">
+            <h1>Administración</h1>
+        </header>
+
+        <div class="login-box">
+            <h2>Ingreso Administrador</h2>
+            <p class="form-description">Solo el usuario administrador del comando policial puede ingresar aquí.</p>
+            <input type="text" id="adminUsuario" placeholder="Usuario (Cédula)">
+            <input type="password" id="adminClave" placeholder="Clave">
+            <button onclick="entrarAdmin()">Ingresar</button>
+            <a href="index.html" class="btn-registro">Volver al inicio</a>
+        </div>
+
+        <footer>
+            <p>Sistema de Gestión RRHH - Comando Policial © 2026</p>
+        </footer>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
