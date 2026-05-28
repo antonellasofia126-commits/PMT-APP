@@ -16,36 +16,36 @@
     <div class="panel-wrap">
         <div class="page-container">
             <header class="page-header">
-            <h1>Panel Funcionario</h1>
-            <p>Solicita reposos y revisa tu perfil.</p>
-        </header>
+                <h1>Panel Funcionario</h1>
+                <p>Solicita reposos y revisa tu perfil.</p>
+            </header>
 
-        <section class="card">
-            <div id="perfil"></div>
-        </section>
+            <section class="card">
+                <div id="perfil"></div>
+            </section>
 
-        <div id="toastNotification" class="toast-notification" style="display:none;"></div>
+            <div id="toastNotification" class="toast-notification" style="display:none;"></div>
 
-        <section class="card">
-            <h2>Solicitudes</h2>
-            <p class="form-description">Selecciona el tipo de trámite y completa las fechas. Adjunta documento solo si es reposo médico. También puedes solicitar el récord disciplinario.</p>
-            <input type="date" id="fecha" class="input-field" placeholder="Fecha de solicitud">
-            <input type="date" id="fechaInicio" class="input-field" placeholder="Fecha inicio vacaciones">
-            <input type="date" id="fechaFin" class="input-field" placeholder="Fecha fin vacaciones">
-            <input type="file" id="archivo" accept="image/*,application/pdf" class="input-field">
-            <div class="link-row">
-                <button onclick="enviarSolicitud('reposo')">Solicitar reposo</button>
-                <button onclick="enviarSolicitud('vacaciones')">Solicitar vacaciones</button>
-                <button onclick="enviarSolicitud('constancia')">Solicitar constancia de trabajo</button>
-                <button onclick="enviarSolicitud('disciplinario')">Solicitar récord disciplinario</button>
-            </div>
-        </section>
+            <section class="card">
+                <h2>Solicitudes</h2>
+                <p class="form-description">Selecciona el tipo de trámite y completa las fechas. Adjunta documento solo si es reposo médico. También puedes solicitar el récord disciplinario.</p>
+                <input type="date" id="fecha" class="input-field" placeholder="Fecha de solicitud">
+                <input type="date" id="fechaInicio" class="input-field" placeholder="Fecha inicio vacaciones">
+                <input type="date" id="fechaFin" class="input-field" placeholder="Fecha fin vacaciones">
+                <input type="file" id="archivo" accept="image/*,application/pdf" class="input-field">
+                <div class="link-row">
+                    <button onclick="enviarSolicitud('reposo')">Solicitar reposo</button>
+                    <button onclick="enviarSolicitud('vacaciones')">Solicitar vacaciones</button>
+                    <button onclick="enviarSolicitud('constancia')">Solicitar constancia de trabajo</button>
+                    <button onclick="enviarSolicitud('disciplinario')">Solicitar récord disciplinario</button>
+                </div>
+            </section>
 
-        <section class="card">
-            <h2>Mis solicitudes</h2>
-            <div id="misSolicitudes">Cargando...</div>
-        </section>
-    </div>
+            <section class="card">
+                <h2>Mis solicitudes</h2>
+                <div id="misSolicitudes">Cargando...</div>
+            </section>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
